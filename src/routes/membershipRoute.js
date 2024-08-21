@@ -1,12 +1,12 @@
 module.exports = (server) => {
     const membershipController = require('../controllers/membershipController');
-    const { verifyToken } = require('../middlewares/jwtMiddleware'); 
+    const { verifyToken,checkGroupOwner } = require('../middlewares/jwtMiddleware'); 
 
     server.route('/groups/:groupId/members')
-        .post(verifyToken, membershipController.addMember)
-        .get(verifyToken, membershipController.getGroupMembers);  
+        .get(verifyToken, membershipController.getGroupMembers)
+        .post(verifyToken, checkGroupOwner,membershipController.addMember);
 
     server.route('/groups/:groupId/members/:userId')
-        .put(verifyToken, membershipController.updateMemberStatus) 
-        .delete(verifyToken, membershipController.removeMember);
+        .put(verifyToken,checkGroupOwner, membershipController.updateMemberStatus) 
+        .delete(verifyToken, checkGroupOwner,membershipController.removeMember);
 };

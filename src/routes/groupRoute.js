@@ -1,7 +1,6 @@
-// routes/groupRoutes.js
 module.exports = (server) => {
     const groupController = require('../controllers/groupController');
-    const { verifyToken } = require('../middlewares/jwtMiddleware'); 
+    const { verifyToken,checkGroupOwner } = require('../middlewares/jwtMiddleware'); 
 
     server.route('/groups')
         .post(verifyToken, groupController.createGroup)    
@@ -9,6 +8,6 @@ module.exports = (server) => {
 
     server.route('/groups/:group_id')
         .get(verifyToken, groupController.getGroup)       
-        .put(verifyToken, groupController.updateGroup)     
-        .delete(verifyToken, groupController.deleteGroup);
+        .put(verifyToken,checkGroupOwner, groupController.updateGroup)     
+        .delete(verifyToken,checkGroupOwner, groupController.deleteGroup);
 };

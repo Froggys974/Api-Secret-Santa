@@ -9,27 +9,25 @@ exports.userRegister = async (req, res) => {
             return res.status(400).json({ message: 'Email déjà utilisé' });
         }
 
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
         const newUser = new User({
             username: req.body.username,
             email: req.body.email,
-            password: hashedPassword,
+            password: req.body.password,
         });
-
         const user = await newUser.save();
-        const token = jwt.sign({ id: user._id, username: user.username, email: user.email }, process.env.JWT_KEY, { expiresIn: '10h' });
+        // const token = jwt.sign({ id: user._id, username: user.username, email: user.email }, process.env.JWT_KEY, { expiresIn: '10h' });
 
-        res.status(201).json({ message: `Utilisateur créé: ${user.email}`, token });
+        res.status(201).json({ message: `Utilisateur créé: ${user.email}`});
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur', error });
+        res.status(500).json({ message: 'Erreur register', error });
     }
 };
 
 exports.userLogin = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        if (!user || !await bcrypt.compare(req.body.password, user.password)) {
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!user || !isMatch) {
             return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
         }
 
@@ -37,13 +35,13 @@ exports.userLogin = async (req, res) => {
 
         res.status(200).json({ token, userId: user._id });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur', error });
+        res.status(500).json({ message: 'Erreur login', error });
     }
 };
 
 exports.modifyUser = async (req, res) => {
     try {
-      const userId = req.params.id;
+      const userId = req.params.user_id;
       const updates = req.body;
         
       if (updates.password) {
@@ -67,7 +65,7 @@ exports.modifyUser = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.user_id;    
 
     const user = await User.findById(userId);
 
@@ -83,7 +81,7 @@ exports.getUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-      const userId = req.params.id;
+      const userId = req.params.user_id;
   
       const user = await User.findByIdAndDelete(userId);
   

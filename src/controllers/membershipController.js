@@ -31,22 +31,22 @@ exports.addMember = async (req, res) => {
     await membership.save();
 
     // Envoyer l'email d'invitation
-    const group = await Group.findById(groupId); // Trouver le groupe pour l'inclure dans l'email
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Invitation à rejoindre un groupe Secret Santa",
-      text: `Bonjour,
+    // const group = await Group.findById(groupId); // Trouver le groupe pour l'inclure dans l'email
+    // const mailOptions = {
+    //   from: process.env.EMAIL_USER,
+    //   to: email,
+    //   subject: "Invitation à rejoindre un groupe Secret Santa",
+    //   text: `Bonjour,
 
-        Vous avez été invité à rejoindre le groupe "${group.name}" sur l'application Secret Santa.
+    //     Vous avez été invité à rejoindre le groupe "${group.name}" sur l'application Secret Santa.
 
-        Veuillez vous connecter pour accepter l'invitation et voir les détails du groupe.
+    //     Veuillez vous connecter pour accepter l'invitation et voir les détails du groupe.
 
-        Cordialement,
-        L'équipe Secret Santa`,
-    };
+    //     Cordialement,
+    //     L'équipe Secret Santa`,
+    // };
 
-    await transporter.sendMail(mailOptions);
+    // await transporter.sendMail(mailOptions);
     res.status(201).json({ message: "Invitation envoyée", membership });
   } catch (error) {
     res.status(500).json({ message: "Erreur add member", error });

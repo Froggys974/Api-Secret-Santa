@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./src/routes/userRoute');
 const groupRoutes = require('./src/routes/groupRoute');
+const membershipRoutes = require('./src/routes/membershipRoute');
+const secretSantaAssignmentRoutes = require('./src/routes/secretSantaAssignmentRoute');
 
 
 
@@ -23,6 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 
 userRoutes(app);
 groupRoutes(app);
+membershipRoutes(app);
+secretSantaAssignmentRoutes(app);
+
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur http://localhost:${port}`);

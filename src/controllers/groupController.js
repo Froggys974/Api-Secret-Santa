@@ -1,4 +1,7 @@
 const Group = require('../models/groupModel');
+const Membership = require('../models/membershipModel');
+const User = require('../models/userModel');
+
 
 exports.createGroup = async (req, res) => {
     try {
@@ -25,21 +28,26 @@ exports.getListGroups = async (req, res) => {
 
 exports.getGroup = async (req, res) => {
     try {
-        const group = await Group.findById(req.params.group_id);
+        const groupId = req.params.group_id;
+        const userId = req.user.id;
+        const group = await Group.findById(groupId);
+        const user = await User.findById(userId);
+
 
         if (!group) {
             return res.status(404).json({ message: 'Groupe non trouvé' });
         }
-
-        if (group.ownerId.toString() !== req.user.id) {
+        const membership = await Membership.findOne({ groupId, userId });
+        
+        if (!membership || !membership.isAccepted) {
             return res.status(403).json({ message: 'Accès interdit' });
         }
-
         res.status(200).json(group);
     } catch (error) {
-        res.status(500).json({ message: 'Erreur get group', error });
+        res.status(500).json({ message: 'Erreur lors de la récupération du groupe', error });
     }
 };
+
 
 exports.updateGroup = async (req, res) => {
     try {

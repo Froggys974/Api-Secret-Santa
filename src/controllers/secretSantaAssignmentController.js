@@ -2,7 +2,7 @@ const SecretSantaAssignment = require('../models/secretSantaAssignmentModel');
 const Membership = require('../models/membershipModel');
 const User = require('../models/userModel');
 const Group = require('../models/groupModel');
-const transporter = require('../utils/emailConfig'); 
+const transporter = require('../../utils/emailConfig'); 
 
 function assignSecretSantas(members) {
     const assignments = [];
@@ -22,8 +22,8 @@ exports.assignSecretSantas = async (req, res) => {
         const { groupId } = req.params;
         
         const memberships = await Membership.find({ groupId, isAccepted: true }).populate('userId');
-        const members = memberships.map(m => m.userId);
-
+        const members = memberships.map(m => m.userId);        
+        
         if (members.length < 2) {
             return res.status(400).json({ message: 'Pas assez de membres pour effectuer l\'assignation' });
         }
@@ -36,27 +36,27 @@ exports.assignSecretSantas = async (req, res) => {
             groupId
         })));
 
-        for (const assignment of assignments) {
-            const giver = await User.findById(assignment.giverId);
-            const receiver = await User.findById(assignment.receiverId);
-            const group = await Group.findById(groupId);
+        // for (const assignment of assignments) {
+        //     const giver = await User.findById(assignment.giverId);
+        //     const receiver = await User.findById(assignment.receiverId);
+        //     const group = await Group.findById(groupId);
 
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: giver.email,
-                subject: 'Votre affectation Secret Santa',
-                text: `Bonjour ${giver.username},
+        //     const mailOptions = {
+        //         from: process.env.EMAIL_USER,
+        //         to: giver.email,
+        //         subject: 'Votre affectation Secret Santa',
+        //         text: `Bonjour ${giver.username},
 
-                Vous avez été assigné pour offrir un cadeau à ${receiver.username} dans le groupe "${group.name}" sur l'application Secret Santa.
+        //         Vous avez été assigné pour offrir un cadeau à ${receiver.username} dans le groupe "${group.name}" sur l'application Secret Santa.
 
-                Rappel : Ne dites à personne qui est votre destinataire !
+        //         Rappel : Ne dites à personne qui est votre destinataire !
 
-                Cordialement,
-                L'équipe Secret Santa`
-            };
+        //         Cordialement,
+        //         L'équipe Secret Santa`
+        //     };
 
-            await transporter.sendMail(mailOptions);
-        }
+        //     await transporter.sendMail(mailOptions);
+        // }
 
         res.status(200).json({ message: 'Assignations de Secret Santa effectuées avec succès', assignments });
     } catch (error) {
