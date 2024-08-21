@@ -4,6 +4,7 @@ const userRoutes = require('./src/routes/userRoute');
 const groupRoutes = require('./src/routes/groupRoute');
 const membershipRoutes = require('./src/routes/membershipRoute');
 const secretSantaAssignmentRoutes = require('./src/routes/secretSantaAssignmentRoute');
+const corsMiddleware = require('./utils/corsUtils'); 
 
 
 
@@ -19,6 +20,9 @@ mongoose.connect(process.env.MONGO_URL, {
 })
 .then(() => console.log('Connexion à MongoDB réussie'))
 .catch(err => console.error('Erreur de connexion à MongoDB', err));
+
+app.use(corsMiddleware);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
