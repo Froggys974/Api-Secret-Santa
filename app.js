@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./src/routes/userRoute');
+const groupRoutes = require('./src/routes/groupRoute');
+
 
 
 require('dotenv').config();
@@ -20,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 userRoutes(app);
+groupRoutes(app);
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur http://localhost:${port}`);

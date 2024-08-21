@@ -10,13 +10,11 @@ exports.userRegister = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const currentDate = new Date();
 
         const newUser = new User({
             username: req.body.username,
             email: req.body.email,
             password: hashedPassword,
-            updatedAt: currentDate
         });
 
         const user = await newUser.save();
@@ -47,9 +45,7 @@ exports.modifyUser = async (req, res) => {
     try {
       const userId = req.params.id;
       const updates = req.body;
-      
-      updates.updatedAt = Date.now();
-  
+        
       if (updates.password) {
         updates.password = await bcrypt.hash(updates.password, 10);
       }
